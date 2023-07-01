@@ -1,10 +1,10 @@
 <?php
 
-namespace novandtya\LaravelSSO\Middleware;
+namespace n0izestr3am\LaravelSSO\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use novandtya\LaravelSSO\LaravelSSOBroker;
+use n0izestr3am\LaravelSSO\LaravelSSOBroker;
 
 class SSOAutoLogin
 {

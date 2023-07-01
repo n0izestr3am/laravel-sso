@@ -1,9 +1,9 @@
 <?php
 
-namespace novandtya\LaravelSSO;
+namespace n0izestr3am\LaravelSSO;
 
 use Illuminate\Support\ServiceProvider;
-use novandtya\LaravelSSO\Commands;
+use n0izestr3am\LaravelSSO\Commands;
 
 class SSOServiceProvider extends ServiceProvider
 {
@@ -43,7 +43,7 @@ class SSOServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make('novandtya\LaravelSSO\Controllers\ServerController');
+        $this->app->make('n0izestr3am\LaravelSSO\Controllers\ServerController');
     }
 
     /**

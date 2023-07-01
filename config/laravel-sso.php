@@ -45,12 +45,12 @@ return [
     ],
 
     // Broker model use when find broker
-    'brokersModel' => novandtya\LaravelSSO\Models\Broker::class,
+    'brokersModel' => n0izestr3am\LaravelSSO\Models\Broker::class,
 
     // Field use when find broker
     'brokerIdField' => 'name',
 
-    // Table used in novandtya\LaravelSSO\Models\Broker model
+    // Table used in n0izestr3am\LaravelSSO\Models\Broker model
     'brokersTable' => 'brokers',
 
     // Logged in user fields sent to brokers.

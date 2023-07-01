@@ -19,13 +19,13 @@ $ composer require n0izestr3am/laravel-sso
 
 Copy config file to Laravel project `config/` folder.
 ```shell
-$ php artisan vendor:publish --provider="novandtya\LaravelSSO\SSOServiceProvider"
+$ php artisan vendor:publish --provider="n0izestr3am\LaravelSSO\SSOServiceProvider"
 ```
 
 
 Create table where all brokers will be saved.
 ```shell
-$ php artisan migrate --path=vendor/novandtya/laravel-sso/database/migrations
+$ php artisan migrate --path=vendor/n0izestr3am/laravel-sso/database/migrations
 ```
 
 
@@ -64,7 +64,7 @@ $ composer require n0izestr3am/laravel-sso
 
 Copy config file to Laravel project `config/` folder.
 ```shell
-$ php artisan vendor:publish --provider="novandtya\LaravelSSO\SSOServiceProvider"
+$ php artisan vendor:publish --provider="n0izestr3am\LaravelSSO\SSOServiceProvider"
 ```
 
 
@@ -83,10 +83,10 @@ SSO_BROKER_SECRET=
 
 
 
-Edit your `app/Http/Kernel.php` by adding `\novandtya\LaravelSSO\Middleware\SSOAutoLogin::class` middleware to `$routeMiddleware` array. It should look like this:
+Edit your `app/Http/Kernel.php` by adding `\n0izestr3am\LaravelSSO\Middleware\SSOAutoLogin::class` middleware to `$routeMiddleware` array. It should look like this:
 ```php
 protected $routeMiddleware = [
-    'auto_login' => \novandtya\LaravelSSO\Middleware\SSOAutoLogin::class,
+    'auto_login' => \n0izestr3am\LaravelSSO\Middleware\SSOAutoLogin::class,
     //...
 ];
 ```
@@ -100,7 +100,7 @@ Last but not least, you need to edit `app/Http/Controllers/Auth/LoginController.
 ```php
 protected function attemptLogin(Request $request)
 {
-    $broker = new \novandtya\LaravelSSO\LaravelSSOBroker;
+    $broker = new \n0izestr3am\LaravelSSO\LaravelSSOBroker;
 
     $credentials = $this->credentials($request);
     return $broker->login($credentials[$this->username()], $credentials['password']);
@@ -108,7 +108,7 @@ protected function attemptLogin(Request $request)
 
 public function logout(Request $request)
 {
-    $broker = new \novandtya\LaravelSSO\LaravelSSOBroker;
+    $broker = new \n0izestr3am\LaravelSSO\LaravelSSOBroker;
 
     $broker->logout();
 

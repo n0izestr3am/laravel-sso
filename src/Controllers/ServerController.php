@@ -1,10 +1,10 @@
 <?php
 
-namespace novandtya\LaravelSSO\Controllers;
+namespace n0izestr3am\LaravelSSO\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
-use novandtya\LaravelSSO\LaravelSSOServer;
+use n0izestr3am\LaravelSSO\LaravelSSOServer;
 
 class ServerController extends BaseController
 {

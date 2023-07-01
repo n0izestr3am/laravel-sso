@@ -1,6 +1,6 @@
 <?php
 
-namespace novandtya\LaravelSSO;
+namespace n0izestr3am\LaravelSSO;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Zefy\SimpleSSO\SSOServer;
-use novandtya\LaravelSSO\Resources\UserResource;
+use n0izestr3am\LaravelSSO\Resources\UserResource;
 
 class LaravelSSOServer extends SSOServer
 {
