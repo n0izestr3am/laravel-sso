@@ -1,6 +1,6 @@
 <?php
 
-namespace Nddcoder\LaravelSSO\Resources;
+namespace n0izestr3am\LaravelSSO\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 

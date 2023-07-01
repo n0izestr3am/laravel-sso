@@ -43,7 +43,7 @@ class SSOServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make('Nddcoder\LaravelSSO\Controllers\ServerController');
+        $this->app->make('n0izestr3am\LaravelSSO\Controllers\ServerController');
     }
 
     /**
