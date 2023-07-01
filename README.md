@@ -1,22 +1,13 @@
 # Simple PHP SSO integration for Laravel
 
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+This package based on [Simple PHP SSO integration for Laravel](https://github.com/zefy/laravel-sso) package.
 
-This Package Fork from https://github.com/zefy/laravel-sso to modify some change
-
-This package based on [Simple PHP SSO skeleton](https://github.com/zefy/php-simple-sso) package and made suitable for Laravel framework.
 ### Requirements
-* Laravel 8+
-* PHP 7.4+
+* Laravel 6+
+* PHP 7.3+
 
-### Words meanings
-* ***SSO*** - Single Sign-On.
-* ***Server*** - page which works as SSO server, handles authentications, stores all sessions data.
-* ***Broker*** - your page which is used visited by clients/users.
-* ***Client/User*** - your every visitor.
-
-### How it works?
-Client visits Broker and unique token is generated. When new token is generated we need to attach Client session to his session in Broker so he will be redirected to Server and back to Broker at this moment new session in Server will be created and associated with Client session in Broker's page. When Client visits other Broker same steps will be done except that when Client will be redirected to Server he already use his old session and same session id which associated with Broker#1.
+### Documentation
+Please read [Simple PHP SSO integration for Laravel docs](https://github.com/zefy/laravel-sso).
 
 # Installation
 ### Server
@@ -28,32 +19,31 @@ $ composer require n0izestr3am/laravel-sso
 
 Copy config file to Laravel project `config/` folder.
 ```shell
-$ php artisan vendor:publish --provider="Zefy\LaravelSSO\SSOServiceProvider"
+$ php artisan vendor:publish --provider="n0izestr3am\LaravelSSO\SSOServiceProvider"
 ```
 
 
 Create table where all brokers will be saved.
 ```shell
-$ php artisan migrate --path=vendor/zefy/laravel-sso/database/migrations
+$ php artisan migrate --path=vendor/n0izestr3am/laravel-sso/database/migrations
 ```
 
 
-Edit your `app/Http/Kernel.php` by removing throttle middleware and adding sessions middleware to `api` middlewares array.
-This is necessary because we need sessions to work in API routes and throttle middleware can block connections which we need.
+Edit your `app/Http/Kernel.php` by create new middleware like this:
 ```php
 'api' => [
+    'throttle:60,1',
     'bindings',
-    \Illuminate\Session\Middleware\StartSession::class,
 ],
-```
 
-```php
- protected $routeMiddleware = [
-     ...
-     'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-     'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-     ...
- ];
+'sso' => [
+    \App\Http\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    'bindings',
+],
+
+//...
 ```
 
 
@@ -68,13 +58,13 @@ $ php artisan sso:broker:create {name}
 ### Broker
 Install this package using composer.
 ```shell
-$ composer require mi-lopez/laravel-sso
+$ composer require n0izestr3am/laravel-sso
 ```
 
 
 Copy config file to Laravel project `config/` folder.
 ```shell
-$ php artisan vendor:publish --provider="Zefy\LaravelSSO\SSOServiceProvider"
+$ php artisan vendor:publish --provider="n0izestr3am\LaravelSSO\SSOServiceProvider"
 ```
 
 
@@ -93,19 +83,16 @@ SSO_BROKER_SECRET=
 
 
 
-Edit your `app/Http/Kernel.php` by adding `\Zefy\LaravelSSO\Middleware\SSOAutoLogin::class` middleware to `web` middleware group. It should look like this:
+Edit your `app/Http/Kernel.php` by adding `\n0izestr3am\LaravelSSO\Middleware\SSOAutoLogin::class` middleware to `$routeMiddleware` array. It should look like this:
 ```php
-protected $middlewareGroups = [
-        'web' => [
-            ...
-            \Zefy\LaravelSSO\Middleware\SSOAutoLogin::class,
-        ],
-
-        'api' => [
-            ...
-        ],
-    ];
+protected $routeMiddleware = [
+    'auto_login' => \n0izestr3am\LaravelSSO\Middleware\SSOAutoLogin::class,
+    //...
+];
 ```
+
+Then use like this:
+![Use auto_login middleware](https://i.imgur.com/1p3BTp1.png)
 
 
 
@@ -113,7 +100,7 @@ Last but not least, you need to edit `app/Http/Controllers/Auth/LoginController.
 ```php
 protected function attemptLogin(Request $request)
 {
-    $broker = new \Zefy\LaravelSSO\LaravelSSOBroker;
+    $broker = new \n0izestr3am\LaravelSSO\LaravelSSOBroker;
 
     $credentials = $this->credentials($request);
     return $broker->login($credentials[$this->username()], $credentials['password']);
@@ -121,7 +108,7 @@ protected function attemptLogin(Request $request)
 
 public function logout(Request $request)
 {
-    $broker = new \Zefy\LaravelSSO\LaravelSSOBroker;
+    $broker = new \n0izestr3am\LaravelSSO\LaravelSSOBroker;
 
     $broker->logout();
 

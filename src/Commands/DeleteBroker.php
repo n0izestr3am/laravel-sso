@@ -1,6 +1,6 @@
 <?php
 
-namespace Zefy\LaravelSSO\Commands;
+namespace n0izestr3am\LaravelSSO\Commands;
 
 use Illuminate\Console\Command;
 
@@ -37,10 +37,11 @@ class DeleteBroker extends Command
      */
     public function handle()
     {
+        $brokerIdField = config('laravel-sso.brokerIdField');
         $brokerClass = app(config('laravel-sso.brokersModel'));
-        $broker = $brokerClass::where('name', $this->argument('name'))->firstOrFail();
+        $broker = $brokerClass::where($brokerIdField, $this->argument($brokerIdField))->firstOrFail();
         $broker->delete();
 
-        $this->info('Broker with name `' . $this->argument('name') . '` successfully deleted.');
+        $this->info("Broker with {$brokerIdField}`" . $this->argument($brokerIdField) . '` successfully deleted.');
     }
 }

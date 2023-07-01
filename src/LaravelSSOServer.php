@@ -1,14 +1,14 @@
 <?php
 
-namespace Zefy\LaravelSSO;
+namespace n0izestr3am\LaravelSSO;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Zefy\SimpleSSO\SSOServer;
-use Zefy\LaravelSSO\Resources\UserResource;
-use Zefy\SimpleSSO\Exceptions\SSOServerException;
+use n0izestr3am\LaravelSSO\Resources\UserResource;
 
 class LaravelSSOServer extends SSOServer
 {
@@ -67,7 +67,7 @@ class LaravelSSOServer extends SSOServer
      */
     protected function authenticate(string $username, string $password)
     {
-        if (!Auth::attempt(['email' => $username, 'password' => $password])) {
+        if (!Auth::attempt([config('laravel-sso.usernameField') => $username, 'password' => $password])) {
             return false;
         }
 
@@ -90,7 +90,7 @@ class LaravelSSOServer extends SSOServer
     protected function getBrokerInfo(string $brokerId)
     {
         try {
-            $broker = config('laravel-sso.brokersModel')::where('name', $brokerId)->firstOrFail();
+            $broker = config('laravel-sso.brokersModel')::where(config('laravel-sso.brokerIdField'), $brokerId)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return null;
         }
@@ -108,7 +108,7 @@ class LaravelSSOServer extends SSOServer
     protected function getUserInfo(string $username)
     {
         try {
-            $user = config('laravel-sso.usersModel')::where('email', $username)->firstOrFail();
+            $user = config('laravel-sso.usersModel')::where(config('laravel-sso.usernameField'), $username)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return null;
         }
@@ -225,48 +225,21 @@ class LaravelSSOServer extends SSOServer
         return Cache::get('broker_session:' . $brokerSessionId);
     }
 
-    /**
-     * Check for the User authorization with application and return error or userinfo
-     *
-     * @return string
-     */
-    public function checkUserApplicationAuth()
+    public function logout()
     {
         try {
-            if (empty($this->checkBrokerUserAuthentication())) {
-                $this->fail('User authorization failed with application.');
+            $this->startBrokerSession();
+            $this->setSessionData('sso_user', null);
+
+            if ($user = request()->user()) {
+                $user->setRememberToken(Str::random(60));
+                $user->save();
+                request()->session()->invalidate();
             }
         } catch (SSOServerException $e) {
             return $this->returnJson(['error' => $e->getMessage()]);
         }
-        return $this->userInfo();
-    }
 
-    /**
-     * Returning the broker details
-     *
-     * @return string
-     */
-    public function getBrokerDetail()
-    {
-        return $this->getBrokerInfo($this->brokerId);
-    }
-
-    /**
-     * Check for User Auth with Broker Application.
-     *
-     * @return boolean
-     */
-    protected function checkBrokerUserAuthentication()
-    {
-        $userInfo = $this->userInfo();
-        $broker = $this->getBrokerDetail();
-        if (!empty($userInfo->id) && !empty($broker)) {
-            $brokerUser = config('laravel-sso.brokersUserModel')::where('user_id', $userInfo->id)->where('broker_id', $broker->id)->first();
-            if (empty($brokerUser)) {
-                return false;
-            }
-        }
-        return true;
+        return $this->returnJson(['success' => 'User has been successfully logged out.']);
     }
 }

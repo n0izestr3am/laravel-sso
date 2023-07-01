@@ -1,10 +1,10 @@
 <?php
 
-namespace Zefy\LaravelSSO\Controllers;
+namespace n0izestr3am\LaravelSSO\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
-use Zefy\LaravelSSO\LaravelSSOServer;
+use n0izestr3am\LaravelSSO\LaravelSSOServer;
 
 class ServerController extends BaseController
 {
@@ -16,6 +16,7 @@ class ServerController extends BaseController
      */
     public function attach(Request $request, LaravelSSOServer $server)
     {
+        $request->session()->put('sso_user', auth()->user()->{config('laravel-sso.usernameField')});
         $server->attach(
             $request->get('broker', null),
             $request->get('token', null),
@@ -32,7 +33,7 @@ class ServerController extends BaseController
     public function login(Request $request, LaravelSSOServer $server)
     {
         return $server->login(
-            $request->get('username', null),
+            $request->get(config('laravel-sso.usernameField'), null),
             $request->get('password', null)
         );
     }
@@ -54,6 +55,6 @@ class ServerController extends BaseController
      */
     public function userInfo(LaravelSSOServer $server)
     {
-        return $server->checkUserApplicationAuth();
+        return $server->userInfo();
     }
 }

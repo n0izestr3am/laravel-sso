@@ -1,10 +1,10 @@
 <?php
 
-namespace Zefy\LaravelSSO\Resources;
+namespace Nddcoder\LaravelSSO\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\Resource;
 
-class UserResource extends JsonResource
+class UserResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -14,8 +14,11 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $userIdField = config('laravel-sso.userIdField');
         $fields = [];
-        foreach (config('laravel-sso.userFields') as $key => $value) {
+        $userFields = array_merge(config('laravel-sso.userFields'), [$userIdField => $userIdField]);
+
+        foreach ($userFields as $key => $value) {
             $fields[$key] = $this->{$value};
         }
 

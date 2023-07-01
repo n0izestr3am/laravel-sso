@@ -14,6 +14,19 @@ return [
 
     'type' => 'server',
 
+    // Prefix of routes registered by package and use when send command from broker to SSO Server
+    'routePrefix' => 'api/sso',
+
+    // Username field to authenticate (like: email, username,..)
+    'usernameField' => 'email',
+
+    // User ID field: required field to mapping User
+    'userIdField' => 'id',
+
+    // User model to authenticate & login in broker
+    'usersModel' => \App\User::class,
+
+
     /*
      |--------------------------------------------------------------------------
      | Settings necessary for the SSO server.
@@ -23,19 +36,29 @@ return [
      |
      */
 
-    'usersModel' => \App\Models\User::class,
-    'brokersModel' => Zefy\LaravelSSO\Models\Broker::class,
-    'brokersUserModel' => Zefy\LaravelSSO\Models\BrokerUser::class,
+    'routeGroupMiddleware' => [
+        'sso'
+    ],
 
-    // Table used in Zefy\LaravelSSO\Models\Broker model
+    'routeAttachMiddleware' => [
+        'auth'
+    ],
+
+    // Broker model use when find broker
+    'brokersModel' => n0izestr3am\LaravelSSO\Models\Broker::class,
+
+    // Field use when find broker
+    'brokerIdField' => 'name',
+
+    // Table used in n0izestr3am\LaravelSSO\Models\Broker model
     'brokersTable' => 'brokers',
-    'brokerUserTable' => 'broker_user',
 
     // Logged in user fields sent to brokers.
     'userFields' => [
         // Return array field name => database column name
         'id' => 'id',
     ],
+
 
     /*
      |--------------------------------------------------------------------------

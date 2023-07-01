@@ -1,10 +1,10 @@
 <?php
 
-namespace Zefy\LaravelSSO\Middleware;
+namespace n0izestr3am\LaravelSSO\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Zefy\LaravelSSO\LaravelSSOBroker;
+use n0izestr3am\LaravelSSO\LaravelSSOBroker;
 
 class SSOAutoLogin
 {
@@ -26,14 +26,28 @@ class SSOAutoLogin
         }
 
         // If there is a problem with data in SSO server, we will re-attach client session.
-        if (isset($response['error']) && strpos($response['error'], 'There is no saved session data associated with the broker session id') !== false) {
+        if (isset($response['error'])
+            && (
+                strpos($response['error'], 'There is no saved session data associated with the broker session id') !== false
+                || strpos($response['error'], 'User not authenticated') !== false
+                || strpos($response['error'], 'User not found') !== false
+            )
+        ) {
             return $this->clearSSOCookie($request);
         }
 
+        $userIdField = config('laravel-sso.userIdField');
+
         // If client is logged in SSO server and didn't logged in broker...
-        if (isset($response['data']) && (auth()->guest() || auth()->user()->id != $response['data']['id'])) {
+        if (isset($response['data']) && (auth()->guest() || auth()->user()->{config('laravel-sso.userIdField')} != $response['data'][$userIdField])) {
             // ... we will authenticate our client.
-            auth()->loginUsingId($response['data']['id']);
+
+            $user = config('laravel-sso.usersModel')::query()
+                ->firstOrCreate([
+                    $userIdField => $response['data'][$userIdField]
+                ], $response['data']);
+
+            auth()->login($user);
         }
 
         return $next($request);

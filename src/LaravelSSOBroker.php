@@ -1,11 +1,10 @@
 <?php
 
-namespace Zefy\LaravelSSO;
+namespace n0izestr3am\LaravelSSO;
 
 use Illuminate\Support\Facades\Cookie;
-use Zefy\LaravelSSO\Exceptions\MissingConfigurationException;
+use n0izestr3am\LaravelSSO\Exceptions\MissingConfigurationException;
 use Zefy\SimpleSSO\SSOBroker;
-use Illuminate\Support\Str;
 use GuzzleHttp;
 
 /**
@@ -13,10 +12,32 @@ use GuzzleHttp;
  * First of all, you need to implement abstract functions in your own class.
  * Secondly, you should create a page which will be your SSO server.
  *
- * @package Zefy\SimpleSSO
+ * @package n0izestr3am\SimpleSSO
  */
 class LaravelSSOBroker extends SSOBroker
 {
+    /**
+     * Login client to SSO server with user credentials.
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function login(string $username, string $password)
+    {
+        $this->userInfo = $this->makeRequest('POST', 'login', [
+            config('laravel-sso.usernameField') => $username,
+            'password' => $password
+        ]);
+
+        if (!isset($this->userInfo['error']) && isset($this->userInfo['data'][config('laravel-sso.userIdField')])) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Generate request url.
      *
@@ -32,7 +53,7 @@ class LaravelSSOBroker extends SSOBroker
             $query = '?' . http_build_query($parameters);
         }
 
-        return $this->ssoServerUrl . '/api/sso/' . $command . $query;
+        return $this->ssoServerUrl . '/' . trim(config('laravel-sso.routePrefix'), ' /') . '/' . $command . $query;
     }
 
     /**
@@ -69,7 +90,7 @@ class LaravelSSOBroker extends SSOBroker
         }
 
         // If cookie token doesn't exist, we need to create it with unique token...
-        $this->token = Str::random(40);
+        $this->token = str_random(40);
         Cookie::queue(Cookie::make($this->getCookieName(), $this->token, 60));
 
         // ... and attach it to broker session in SSO server.
