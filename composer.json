@@ -20,13 +20,13 @@
     },
     "autoload": {
       "psr-4": {
-        "n0izestr3am\\LaravelSSO\\": "src/"
+        "novandtya\\LaravelSSO\\": "src/"
       }
     },
     "extra": {
       "laravel": {
         "providers": [
-            "n0izestr3am\\LaravelSSO\\SSOServiceProvider"
+            "novandtya\\LaravelSSO\\SSOServiceProvider"
         ]
       }
     }

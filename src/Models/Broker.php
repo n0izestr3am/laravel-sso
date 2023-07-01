@@ -1,6 +1,6 @@
 <?php
 
-namespace n0izestr3am\LaravelSSO\Models;
+namespace novandtya\LaravelSSO\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

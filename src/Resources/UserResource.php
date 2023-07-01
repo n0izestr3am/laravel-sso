@@ -1,6 +1,6 @@
 <?php
 
-namespace n0izestr3am\LaravelSSO\Resources;
+namespace novandtya\LaravelSSO\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 

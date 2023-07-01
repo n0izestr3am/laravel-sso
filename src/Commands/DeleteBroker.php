@@ -1,6 +1,6 @@
 <?php
 
-namespace n0izestr3am\LaravelSSO\Commands;
+namespace novandtya\LaravelSSO\Commands;
 
 use Illuminate\Console\Command;
 
